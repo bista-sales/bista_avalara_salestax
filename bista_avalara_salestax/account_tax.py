@@ -53,8 +53,9 @@ class account_tax(osv.osv):
             if not avatax_config.auto_generate_customer_code:
                 raise osv.except_osv(_('AvaTax: Warning !'), _('Customer Code for customer %s not defined.\n\n  You can edit the Customer Code in customer profile. You can fix by clicking "Generate Customer Code" button in the customer contact information"'% (partner.name)))
             else:
-                address_obj.generate_cust_code(cr, 1, [partner.id], partner.id)
-
+                address_obj.generate_cust_code(cr, 1, [partner.id], partner.id) 
+                        
+                        
         if not shipping_address_id:
             raise osv.except_osv(_('AvaTax: No Shipping Address Defined !'), _('There is no shipping address defined for the partner.'))        
         #it's show destination address

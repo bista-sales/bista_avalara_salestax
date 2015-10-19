@@ -21,6 +21,7 @@
 from openerp.osv import fields,osv
 from openerp.tools.translate import _
 import openerp.addons.decimal_precision as dp
+from datetime import datetime
 
 class sale_order(osv.osv):
     _inherit = "sale.order"
@@ -333,14 +334,14 @@ class sale_order(osv.osv):
                     order_date = (order.date_confirm).split(' ')[0]
                 else:
                     order_date = (order.date_order).split(' ')[0]
-                
+                order_date = datetime.strptime(order_date, "%Y-%m-%d").date()
                 if avatax_config.on_line:
                     # Line level tax calculation
                     #tax based on individual order line 
                     tax_id = []
                     for line1 in lines1:
-                        tax_id = line1['tax_id'] and [tax.id for tax in line1['tax_id']]
-                        if tax_id and ava_tax and ava_tax[0] not in tax_id:
+                        tax_id = line1['tax_id'] and [tax.id for tax in line1['tax_id']] or []
+                        if ava_tax and ava_tax[0] not in tax_id:
                             tax_id.append(ava_tax[0])
                         ol_tax_amt =  account_tax_obj._get_compute_tax(cr, uid, avatax_config, order_date,
                                                                     order.name, 'SalesOrder', order.partner_id, ship_from_address_id,

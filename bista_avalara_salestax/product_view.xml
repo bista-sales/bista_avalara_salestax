@@ -29,9 +29,9 @@
                     <sheet>
                         <group col="4" colspan="4">
                             <field name="name"/>
-                            <field name="company_id" groups="base.group_multi_company"/>
-                            <field name="description"/>
-                            <field name="type"/>
+		                    <field name="company_id" groups="base.group_multi_company"/>
+		                    <field name="description"/>
+		                    <field name="type"/>
                         </group>                        
                     </sheet>
                 </form>
@@ -64,31 +64,31 @@
                 </field>
                
 
-                <xpath expr="//page[@string='Accounting']" position="after">
-                  <page string="AvaTax">
-                      <separator string="AvaTax Properties" colspan="4"/>
-                      <group colspan="2" col="2">
-                        <field name="tax_apply"/>
-                           <newline/>
-                        <field name="tax_code_id" attrs="{'invisible': [('tax_apply','=',False)],'required': [('tax_apply','=',True)]}" /> 
-                      </group>
-                  </page>
-                </xpath>
+		        <xpath expr="//page[@string='Accounting']" position="after">
+		          <page string="AvaTax">
+		              <separator string="AvaTax Properties" colspan="4"/>
+			          <group colspan="2" col="2">
+			            <field name="tax_apply"/>
+	                   	<newline/>
+			            <field name="tax_code_id" attrs="{'invisible': [('tax_apply','=',False)],'required': [('tax_apply','=',True)]}" /> 
+			          </group>
+		          </page>
+		        </xpath>
                 
-                
-                <field name="description" position="replace">
-                    <group colspan="2" col="2" string="Product Description" >
-                        <field name="description" placeholder="describe the product characteristics..." nolabel="1"/>
-                    </group>
-                </field>
-                
-                <field name="default_code" position="replace"/>
-                
-                <div name="options" groups="base.group_user" position="before">
-                    <label for="default_code" class="oe_edit_only"/>
+		        
+		        <field name="description" position="replace">
+		            <group colspan="2" col="2" string="Product Description" >
+		                <field name="description" placeholder="describe the product characteristics..." nolabel="1"/>
+		            </group>
+		        </field>
+		        
+		        <field name="default_code" position="replace"/>
+		        
+		        <div name="options" groups="base.group_user" position="before">
+		            <label for="default_code" class="oe_edit_only"/>
                     <h2><field name="default_code"  placeholder="Product Code"/></h2>
-                </div>
-                
+		        </div>
+		        
             </field>
         </record>
 

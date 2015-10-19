@@ -877,7 +877,7 @@ class account_invoice_tax(osv.osv):
                 if avatax_config.on_line:
                     for line1 in lines1:
                         tax_id = 'invoice_line_tax_id' in line1 and [tax.id for tax in line1['invoice_line_tax_id']] or []
-                        if tax_id and ava_tax and ava_tax[0] not in tax_id:
+                        if ava_tax and ava_tax[0] not in tax_id:
                             tax_id.append(ava_tax[0])
                         ol_tax_amt =  account_tax_obj._get_compute_tax(cr, uid, avatax_config, invoice.date_invoice or time.strftime('%Y-%m-%d'),
                                                                    invoice.internal_number, 'SalesOrder',

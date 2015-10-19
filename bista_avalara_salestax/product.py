@@ -47,7 +47,8 @@ product_tax_code()
 
 class product_template(osv.osv):
     _inherit = "product.template"
-
+    
+    
     def create(self, cr, uid, vals, context=None):
         p_temp = self.pool.get('product.template')
         p_id = super(product_template, self).create(cr, uid, vals, context)
@@ -68,20 +69,8 @@ class product_template(osv.osv):
                 vals['tax_apply'] = False
                 vals['tax_code_id'] = False
         return super(product_template, self).write(cr, uid, ids, vals, context)
-
-    def onchange_categ(self, cr, uid, ids, categ_id, context=None):
-        print "",ids, categ_id
-        res = {
-               'tax_apply': False,
-               'tax_code_id': False
-               }
-        if categ_id:
-            p_brw = self.pool.get('product.category').browse(cr, uid, categ_id)
-            if p_brw.tax_code_id:
-                res['tax_apply'] = True
-                res['tax_code_id'] = p_brw.tax_code_id.id
-        return {'value': res}
-
+            
+    
     _columns = {
         'tax_code_id': fields.many2one('product.tax.code', 'Product Tax Code', help="AvaTax Product Tax Code"),
         'tax_apply': fields.boolean('Tax Calculation',help="Use Following Tax code for this Product"),
@@ -97,7 +86,19 @@ class product_product(osv.osv):
     _sql_constraints = [
         ('name_uniq', 'unique(default_code)', 'Product Reference Code must be unique per Company!'),
     ]
-
+    
+    def onchange_categ(self, cr, uid, ids, categ_id, context=None):
+        res = {
+               'tax_apply': False,
+               'tax_code_id': False
+               }
+        if categ_id:
+            p_brw = self.pool.get('product.category').browse(cr, uid, categ_id)
+            if p_brw.tax_code_id:
+                res['tax_apply'] = True
+                res['tax_code_id'] = p_brw.tax_code_id.id
+        return {'value': res} 
+    
 product_product()
 
 class product_category(osv.osv):
