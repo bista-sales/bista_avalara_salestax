@@ -307,11 +307,11 @@ class sale_order(osv.osv):
             tax_amount = o_tax_amt = s_tax_amt = 0.0
             
             # ship from Address / Origin Address either warehouse or company if none
-            if not order.warehouse_id.partner_id.id:
-                ship_from_address_id = order.company_id.partner_id.id
-            else:
-                ship_from_address_id = order.warehouse_id.partner_id.id
-                
+            # if not order.warehouse_id.partner_id.id:
+            ship_from_address_id = order.partner_id.id
+            # else:
+            #     ship_from_address_id = order.warehouse_id.partner_id.id
+
             
 #            c_code = partner_obj.browse(cr, uid, order.partner_id.id).country_id.code or False
 #            cs_code = []        #Countries where Avalara address validation is enabled
