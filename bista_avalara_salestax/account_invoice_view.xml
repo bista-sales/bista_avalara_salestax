@@ -46,8 +46,6 @@
                     <field name="location_code" />  
                 	<field name="warehouse_id" on_change="onchange_warehouse_id(warehouse_id)" options="{'no_create': True}" groups="stock.group_locations"/>
                     <field name="is_add_validate" readonly="1" invisible="1"/>
-                    <field name="partner_invoice_id"/>
-                    <field name="partner_shipping_id"/>
                 </xpath>
 				
 				<button name="button_reset_taxes" position="replace">

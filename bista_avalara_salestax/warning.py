@@ -25,6 +25,7 @@ def _get_view_id(self, cr, uid):
 def message(self, cr, uid, id, context):
     message = self.browse(cr, uid, id)
     message_type = [t[1]for t in WARNING_TYPES if message.type == t[0]][0]
+    print '%s: %s' % (_(message_type), _(message.title))
     res = {
         'name': '%s: %s' % (_(message_type), _(message.title)),
         'view_type': 'form',
