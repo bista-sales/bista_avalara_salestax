@@ -137,6 +137,8 @@ class account_invoice(osv.osv):
         res['value']['shipping_address'] = str((addr.name  or '')+ '\n'+(addr.street or '')+ '\n'+(addr.city and addr.city+', ' or ' ')+(addr.state_id and addr.state_id.name or '')+ ' '+(addr.zip or '')+'\n'+(addr.country_id and addr.country_id.name or ''))        
         if res_obj.validation_method:res['value']['is_add_validate'] = True
         else:res['value']['is_add_validate'] = False
+        res['value']['partner_invoice_id'] = partner_id
+        res['value']['partner_shipping_id'] = partner_id
         return res
             
     def onchange_warehouse_id(self, cr, uid, ids, warehouse_id, context=None):
@@ -374,9 +376,14 @@ class account_invoice(osv.osv):
         'shipping_address': fields.text('Tax Address'),
         'location_code': fields.char('Location code', size=128, readonly=True, states={'draft':[('readonly',False)]}),  
         'warehouse_id': fields.many2one('stock.warehouse', 'Warehouse'),
-        'partner_invoice_id': fields.many2one('res.partner', 'Invoice Address', readonly=True, required=True, states={'draft': [('readonly', False)]}, help="Invoice address for current sales order."),
-        'partner_shipping_id': fields.many2one('res.partner', 'Delivery Address', readonly=True, required=True, states={'draft': [('readonly', False)]}, help="Delivery address for current sales order."),
-                
+        'partner_invoice_id': fields.related('partner_id', relation='res.partner', type='many2one',
+                                             string='Invoice Address', required=False,
+                                              states = {'draft': [('readonly', False)]},
+                                              help = "Invoice address for current sales order."),
+        'partner_shipping_id': fields.related('partner_id', relation='res.partner', type='many2one',
+                                              string='Delivery Address', required=False,
+                                               states = {'draft': [('readonly', False)]},
+                                               help = "Delivery address for current sales order."),
     }
     
     _defaults = {
