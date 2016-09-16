@@ -10,6 +10,8 @@ from openerp.tools.translate import _
 #from osv import osv
 from openerp.osv import osv
 from openerp import fields
+from suds.client import Client
+
 
 class AvaTaxService:
 
@@ -41,7 +43,6 @@ class AvaTaxService:
     def create_account_service(self):
         self.accountSvc = self.service('account')
         return self
-    
 
     def service(self, name):
         nameCap = string.capitalize(name) # So this will be 'Tax' or 'Address'
@@ -52,7 +53,7 @@ class AvaTaxService:
         wsdl_url = 'https://avatax.avalara.net/%s/%ssvc.wsdl' % (nameCap, nameCap)
         
         try:
-             svc = suds.client.Client(url=wsdl_url)
+            svc = Client(url=wsdl_url)
         except urllib2.URLError, details:
             raise osv.except_osv(_('AvaTax: Server Failed to Response'), _(details))
         else:
