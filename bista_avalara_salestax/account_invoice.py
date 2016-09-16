@@ -96,9 +96,9 @@ def get_origin_address_for_tax(self, cr, uid, ids, context=None):
                         else:
                             return inv_obj.partner_id.id
             else:
-                return inv_obj and inv_obj.partner_id and inv_obj.partner_id.id
+                return inv_obj.company_id and inv_obj.company_id.partner_id and inv_obj.company_id.partner_id.id
         else:
-            return inv_obj.partner_id and inv_obj.partner_id.id or False
+            return inv_obj.warehouse_id.partner_id and inv_obj.warehouse_id.partner_id.id or False   
 
 def get_origin_tax_date(self, cr, uid, ids, context=None):
     """ partner address, on which avalara tax will calculate  """
@@ -376,9 +376,14 @@ class account_invoice(osv.osv):
         'shipping_address': fields.text('Tax Address'),
         'location_code': fields.char('Location code', size=128, readonly=True, states={'draft':[('readonly',False)]}),  
         'warehouse_id': fields.many2one('stock.warehouse', 'Warehouse'),
-        'partner_invoice_id': fields.many2one('res.partner', 'Invoice Address', readonly=True, required=True, states={'draft': [('readonly', False)]}, help="Invoice address for current sales order."),
-        'partner_shipping_id': fields.many2one('res.partner', 'Delivery Address', readonly=True, required=True, states={'draft': [('readonly', False)]}, help="Delivery address for current sales order."),
-                
+        'partner_invoice_id': fields.related('partner_id', relation='res.partner', type='many2one',
+                                             string='Invoice Address', required=False,
+                                              states = {'draft': [('readonly', False)]},
+                                              help = "Invoice address for current sales order."),
+        'partner_shipping_id': fields.related('partner_id', relation='res.partner', type='many2one',
+                                              string='Delivery Address', required=False,
+                                               states = {'draft': [('readonly', False)]},
+                                               help = "Delivery address for current sales order."),
     }
     
     _defaults = {
@@ -616,8 +621,8 @@ class account_invoice(osv.osv):
                                                    invoice.internal_number, not invoice.invoice_doc_no and 'SalesInvoice' or 'ReturnInvoice',
                                                    invoice.partner_id, shipping_add_origin_id,
                                                    shipping_add_id, lines1, invoice.user_id, invoice.exemption_code or None, invoice.exemption_code_id.code or None,
-                                                   False, tax_date, invoice.invoice_doc_no, invoice.location_code or None,
-                                                   context=context)
+                                                   False, tax_date,
+                                                   invoice.invoice_doc_no, invoice.location_code or '', context=context)
             else:
                 for o_line in invoice.invoice_line:
                     invoice_obj.write(cr, uid, [o_line.id], {'tax_amt': 0.0,})
@@ -866,13 +871,11 @@ class account_invoice_tax(osv.osv):
                                 [('is_avatax','=',True),
                                 ('type_tax_use','in', ['sale','all']),
                                 ('company_id', '=', invoice.company_id.id)])
-            # if not invoice.warehouse_id.partner_id.id:
-            ship_from_address_id = invoice.partner_id.id
-                # print "\n\n11111"
-            # else:
-            #     ship_from_address_id = invoice.warehouse_id.partner_id.id
-            #     print "\n\n2222"
-            # aaa
+            if not invoice.warehouse_id.partner_id.id:
+                ship_from_address_id = invoice.company_id.partner_id.id
+            else:
+                ship_from_address_id = invoice.warehouse_id.partner_id.id
+            
             shipping_add_id = get_address_for_tax(self, cr, uid, [invoice_id], context)
             if invoice.invoice_line:
                 lines1 = self.create_lines(cr, uid, invoice.invoice_line)
@@ -916,6 +919,8 @@ class account_invoice_tax(osv.osv):
                                                             invoice.internal_number, 'SalesOrder', invoice.partner_id, ship_from_address_id,
                                                             shipping_add_id, lines1, invoice.user_id, invoice.exemption_code or None, invoice.exemption_code_id.code or None,
                                                             context=context).TotalTax
+                
+                
                 for line in invoice.invoice_line:
                     if line.product_id and line.product_id.tax_apply:
                         if ava_tax:

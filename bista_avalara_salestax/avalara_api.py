@@ -107,6 +107,7 @@ class AvaTaxService:
                 #for w_message in result.Messages.Message:
 #                w_message = result.Messages.Message[0]
                 for w_message in result.Messages.Message:
+#                    print"w_message",w_message
                     if w_message.Severity == 'Error':
                         if (w_message._Name == 'TaxAddressError' or w_message._Name == 'AddressRangeError' or  w_message._Name == 'AddressUnknownStreetError' or w_message._Name == 'AddressNotGeocodedError' or w_message._Name == 'NonDeliverableAddressError' ):
                             raise osv.except_osv(_('AvaTax: Warning \n AvaTax could not validate the street address.'), _('You can save the address and AvaTax will make an attempt to compute taxes based on the zip code if "Force Address Validation" is disabled in the Avatax connector configuration.  \n\n Also please ensure that the company address is set and Validated.  You can get there by going to Sales->Customers and removing "Customers" filter from the search at the top.  Then go to your company contact info and validate your address in the Avatax Tab'))
